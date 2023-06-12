@@ -1,5 +1,7 @@
 """Tests for models"""
 
+from decimal import Decimal
+
 # We need to use test case because this will work with the db.
 # Reference the db changes that are made in create_user.
 from django.test import TestCase
