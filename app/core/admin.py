@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 from core import models
 
+# This is a custom user admin class that is going to display
 class UserAdmin(BaseUserAdmin):
     """Define the admine pages for users"""
 
@@ -45,3 +46,5 @@ class UserAdmin(BaseUserAdmin):
     )
 
 admin.site.register(models.User, UserAdmin)
+
+admin.site.register(models.Recipe)

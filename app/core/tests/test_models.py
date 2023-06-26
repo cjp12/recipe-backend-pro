@@ -8,6 +8,8 @@ from django.test import TestCase
 # Get user model will stay up to date even if you updated it. BP
 from django.contrib.auth import get_user_model
 
+# Need to be pulled in for non-auth models
+from core import models
 
 class ModelTests(TestCase):
     """Test Models"""
@@ -58,3 +60,29 @@ class ModelTests(TestCase):
         # is superuser is a benefit of the permissions mixin.
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
+
+    def test_create_recipe(self):
+        """Tests the creation of a recipe."""
+
+        # Create a user to assign the recipe to. Assign to user.
+        # Remember that these don't persist
+        user = get_user_model().objects.create_user(
+            name = "Test Name",
+            email = 'test@example.com',
+            password = 'password123'
+        )
+
+        # Create the recipe
+        # These don't persist
+        recipe = models.Recipe.objects.create(
+            user = user,
+            title = 'Sample Recipe Name',
+            time_minutes = 5,
+            price = Decimal('5.50'),
+            description = 'Sample recipe description'
+
+        )
+
+        # Checking that the repr,str functions print the title name
+        # Checkign that the recipe is actually created
+        self.assertEqual(str(recipe), recipe.title)

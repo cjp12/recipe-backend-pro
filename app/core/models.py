@@ -1,5 +1,6 @@
 """Database Models"""
 
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -52,3 +53,27 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     # This is how we make the default username into the email
     USERNAME_FIELD = 'email'
+
+
+class Recipe(models.Model):
+    """Stores the recipes"""
+
+    # Here we are setting the foreign key to the user
+    # Referenced from the settigns instead of direct imports
+    # in case the auth model changes. Not hard coded
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    time_minutes = models.IntegerField()
+    link = models.CharField(max_length=255)
+    price = models.DecimalField(max_digits=5, decimal_places=2)
+    description = models.TextField(blank=True)
+
+    # We should be able to skip the objects assignment here because we are
+    # adopting the model base class and not creating a custom class
+
+    def __str__(self):
+        """returns the title if the object is printed"""
+        return self.title
+
