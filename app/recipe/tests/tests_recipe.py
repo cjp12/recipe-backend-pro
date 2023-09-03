@@ -479,8 +479,8 @@ class PrivateRecipeAPITests(TestCase):
         recipe.refresh_from_db()
 
         for ingredient in payload['ingredients']:
-            exists = Recipe.objects.filter(ingredient['name']).exists()
-            self.assertEqual(exists)
+            exists = recipe.ingredients.filter(name = ingredient['name']).exists()
+            self.assertTrue(exists)
 
     def test_assign_ingredient_on_update(self):
         """Test that you are able to assign ingredients on update."""
@@ -495,7 +495,7 @@ class PrivateRecipeAPITests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-        self.assertIn(ingredient, recipe.ingredients)
+        self.assertIn(ingredient, recipe.ingredients.all())
 
     def test_overwrite_ingredient_on_update(self):
         """Test that you are able to overwrite ingredients on update."""
@@ -510,8 +510,8 @@ class PrivateRecipeAPITests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-        self.assertIn(ingredient1, recipe.ingredients)
-        self.assertNotIn(ingredient2, recipe.ingredients)
+        self.assertIn(ingredient1, recipe.ingredients.all())
+        self.assertNotIn(ingredient2, recipe.ingredients.all())
 
 
     def test_overwrite_ingredient_on_update(self):
@@ -525,7 +525,7 @@ class PrivateRecipeAPITests(TestCase):
         res = self.client.patch(url, payload, format='json' )
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertNotIn(ingredient, recipe.ingredients)
+        self.assertNotIn(ingredient, recipe.ingredients.all())
         self.assertEqual(recipe.ingredients.count(),0)
 
 

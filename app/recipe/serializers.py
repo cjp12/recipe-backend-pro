@@ -87,7 +87,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
         if ingredients is not None:
             instance.ingredients.clear()  # Clear the tags that were already there
-            self._get_or_create_tags(ingredients, instance)
+            self._get_or_create_ingredients(ingredients, instance)
 
         # This is probably the default language in the update value.
         for attr, value in validated_data.items():
