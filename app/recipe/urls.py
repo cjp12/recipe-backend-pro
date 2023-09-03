@@ -13,6 +13,8 @@ router = DefaultRouter()
 # These will be the outward facing urls. These will be seen on the endpoint.
 # The model name is used to
 router.register('recipes', views.RecipeViewSet)
+router.register('tags', views.TagViewSet)
+router.register('ingredients', views.IngredientViewset)
 
 # Used for the reverse lookup of urls
 app_name='recipe'

@@ -1,8 +1,11 @@
 from rest_framework.viewsets import ModelViewSet
+from rest_framework import viewsets, mixins  #?
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from core.models import Recipe  # Why is the model here?
+from core.models import Tag
+from core.models import Ingredient
 from recipe import serializers
 
 # I forgot to pull in the authentication information. When you authenticate,
@@ -51,3 +54,40 @@ class RecipeViewSet(ModelViewSet):
         # serialzer. Then we are able to save the user that is currenlty
         # authenticated to the serializer before pulling it into the model.
         serializer.save(user = self.request.user)
+
+
+# Why are we using the mixins here and not model viewset? the rest of the code is the same.
+# woah the model mixins allow for you to control what can be updated and created. This is just a
+# permisison mixin. I assume the model mixin gives it all to you.
+class TagViewSet(mixins.DestroyModelMixin,
+                 mixins.UpdateModelMixin,
+                 mixins.ListModelMixin,
+                 viewsets.GenericViewSet):
+    """This is the viewset for the tag serializer"""
+
+    serializer_class = serializers.TagSerializer
+    queryset = Tag.objects.all()
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """overwrite the default get query set method. filter for the user (class attribute)
+        Then order by the name (alphabetical)"""
+        # Don't include the .objects. here. The queryset doesn't have that. Its not the
+        # model manager. Also look at the queryset level. This is already at the obj lev.
+        return self.queryset.filter(user=self.request.user).order_by('-name')
+
+class IngredientViewset(mixins.DestroyModelMixin,
+                        mixins.UpdateModelMixin,
+                        mixins.ListModelMixin,
+                        viewsets.GenericViewSet):
+    """Manage ingredients in the database"""
+    serializer_class = serializers.IngredientSerializer
+    # Tells django which models we would like to be changed via this view.
+    queryset = Ingredient.objects.all()
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """Filter queryset to only the authenticated user"""
+        return self.queryset.filter(user = self.request.user).order_by('-name')

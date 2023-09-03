@@ -11,6 +11,10 @@ from django.contrib.auth import get_user_model
 # Need to be pulled in for non-auth models
 from core import models
 
+def create_user(email='user@example.com', password='testpass123'):
+    """Create and return a new user"""
+    return get_user_model().objects.create_user(email=email, password=password)
+
 class ModelTests(TestCase):
     """Test Models"""
 
@@ -86,3 +90,23 @@ class ModelTests(TestCase):
         # Checking that the repr,str functions print the title name
         # Checkign that the recipe is actually created
         self.assertEqual(str(recipe), recipe.title)
+
+    def test_create_tag(self):
+        """Test the creation of a tag is successful"""
+        user=create_user()
+        tag = models.Tag.objects.create(user=user, name='Tag1')
+
+        self.assertEqual(str(tag), tag.name)
+
+
+    def test_create_ingredient(self):
+        """test creating ingredient is successful"""
+
+        user = create_user()
+        ingredient = models.Ingredient.objects.create(
+            user = user,
+            name = 'Ingredient1'
+        )
+
+        # String reps of the instance is the best way to show succ.
+        self.assertEqual(str(ingredient), ingredient.name)

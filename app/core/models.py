@@ -69,6 +69,9 @@ class Recipe(models.Model):
     link = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=5, decimal_places=2)
     description = models.TextField(blank=True)
+    # My first many to many!
+    tags = models.ManyToManyField('Tag')  # make sure to pass as a string
+    ingredients = models.ManyToManyField('Ingredient')
 
     # We should be able to skip the objects assignment here because we are
     # adopting the model base class and not creating a custom class
@@ -77,3 +80,21 @@ class Recipe(models.Model):
         """returns the title if the object is printed"""
         return self.title
 
+
+class Tag(models.Model):
+    """Tag for filtering recipes"""
+    name = models.CharField(max_length=255)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+
+class Ingredient(models.Model):
+    """Ingredient that will make up the components of a receipe"""
+    name = models.CharField(max_length=255)
+    # settings.AUTH_USER_MODEL is taken from the settings file that we set.
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
